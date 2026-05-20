@@ -854,29 +854,53 @@
             });
             
             // Log Result Functionality
-            logResultBtn.addEventListener('click', function() {
-                if (!window.lastCalculation) return;
-                
-                // Get existing logs or initialize array
-                let logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
-                
-                // Add new log entry
-                logs.unshift(window.lastCalculation); // Add to beginning for newest first
-                
-                // Save to localStorage
-                localStorage.setItem('inrLogs', JSON.stringify(logs));
-                
-                // Show confirmation
-                alert('Result logged successfully!');
-                
-                // Refresh log display if on log page
-                if (document.getElementById('log').classList.contains('active')) {
-                    renderLogTable();
-                }
-                
-                // Hide result container after logging
-                resultContainer.classList.remove('show');
-            });
+            // Log Result Functionality - FIXED
+logResultBtn.addEventListener('click', function() {
+    if (!window.lastCalculation) {
+        alert('Please calculate an INR value first');
+        return;
+    }
+    
+    // Get comment from new input field
+    const comment = document.getElementById('log-comment')?.value?.trim() || 'No note';
+    
+    // Get existing logs or initialize array
+    let logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
+    
+    // Create simplified log entry (only essential fields)
+    const logEntry = {
+        id: Date.now(),  // Unique ID for deletion
+        inr: window.lastCalculation.inr,
+        comment: comment,
+        timestamp: new Date().toISOString()
+    };
+    
+    // Add to beginning of array (newest first)
+    logs.unshift(logEntry);
+    
+    // Save to localStorage
+    try {
+        localStorage.setItem('inrLogs', JSON.stringify(logs));
+        alert('✓ Result logged successfully!');
+        
+        // Clear comment field
+        if (document.getElementById('log-comment')) {
+            document.getElementById('log-comment').value = '';
+        }
+        
+        // Refresh log display if on log page
+        if (document.getElementById('log').classList.contains('active')) {
+            renderLogTable();
+        }
+        
+        // Hide result container after logging
+        resultContainer.classList.remove('show');
+    } catch (e) {
+        console.error('Failed to save log:', e);
+        alert('⚠️ Could not save log. Storage may be full.');
+    }
+});
+          
             
             // Render Log Table
             function renderLogTable() {
