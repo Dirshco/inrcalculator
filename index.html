@@ -528,14 +528,21 @@
                 <i class="fas fa-equals"></i> Calculate INR
             </button>
             
-            <div class="result-container" id="result-container">
-                <div>Your INR is:</div>
-                <div class="inr-value" id="inr-result">--</div>
-                <div id="inr-interpretation" style="margin: 10px 0; font-weight: 500;"></div>
-                <button class="btn" id="log-result-btn">
-                    <i class="fas fa-save"></i> Log This Result
-                </button>
-            </div>
+           <div class="result-container" id="result-container">
+    <div>Your INR is:</div>
+    <div class="inr-value" id="inr-result">--</div>
+    <div id="inr-interpretation" style="margin: 10px 0; font-weight: 500;"></div>
+    
+    <!-- ✅ NEW: Comment field for log entries -->
+    <div class="input-group" style="margin: 15px 0;">
+        <label for="log-comment">Add a note (optional)</label>
+        <input type="text" id="log-comment" placeholder="e.g., Pre-dose, feeling well, dose change...">
+    </div>
+    
+    <button class="btn" id="log-result-btn">
+        <i class="fas fa-save"></i> Log This Result
+    </button>
+</div>
         </div>
         
         <div class="card">
