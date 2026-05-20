@@ -760,9 +760,14 @@
     </div>
     
     <footer>
-        <p>INR Calculator &copy; 2026 TGRF | For educational use only</p>
-        <p style="margin-top: 5px; font-size: 0.85rem;">Always consult your healthcare provider for medical advice</p>
+        <!-- In the disclaimer div, update if it contains a year -->
+<div class="disclaimer">
+    <strong>Medical Disclaimer:</strong> ... INR management requires regular monitoring by a healthcare professional.
+          <p style="margin-top: 5px; font-size: 0.85rem;">Always consult your healthcare provider for medical advice</p>
+    <p><small style="display:block; margin-top:8px; color:#666;">© 2026 TGRF • Tele-Geriatric Research Fellowship</small></p>
+        <p>For educational use only</p>
         <P>Tele-Geriatric Research Fellowship</P>
+</div>
     </footer>
 
     <script>
@@ -929,58 +934,73 @@ logResultBtn.addEventListener('click', function() {
 });
           
             
-            // Render Log Table
-            function renderLogTable() {
-                const logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
-                
-                if (logs.length === 0) {
-                    logBody.innerHTML = '';
-                    emptyLog.style.display = 'block';
-                    clearAllBtn.style.display = 'none';
-                    return;
-                }
-                
-                emptyLog.style.display = 'none';
-                clearAllBtn.style.display = 'block';
-                
-                logBody.innerHTML = logs.map((log, index) => {
-                    const date = new Date(log.timestamp);
-                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    
-                    return `
-                        <tr>
-                            <td>${formattedDate}</td>
-                            <td>${log.patientPT}</td>
-                            <td>${log.meanNormalPT}</td>
-                            <td>${log.isi}</td>
-                            <td><strong>${log.inr}</strong></td>
-                            <td>
-                                <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.85rem;" data-index="${index}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-                
-                // Add event listeners to delete buttons
-                document.querySelectorAll('#log-body .btn-danger').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const index = this.getAttribute('data-index');
-                        deleteLogEntry(index);
-                    });
-                });
-            }
+           // Render Log Table - SIMPLIFIED (INR + Comment + Date only)
+function renderLogTable() {
+    const logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
+    
+    if (logs.length === 0) {
+        logBody.innerHTML = '';
+        emptyLog.style.display = 'block';
+        clearAllBtn.style.display = 'none';
+        return;
+    }
+    
+    emptyLog.style.display = 'none';
+    clearAllBtn.style.display = 'block';
+    
+    logBody.innerHTML = logs.map((log) => {
+        const date = new Date(log.timestamp);
+        // Format: "May 20, 2026 • 2:34 PM"
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        // Color-code INR values for quick visual reference
+        const inrValue = parseFloat(log.inr);
+        let inrColor = '#333';
+        if (inrValue < 2.0) inrColor = '#FF9800';      // Below therapeutic
+        else if (inrValue <= 3.0) inrColor = '#4CAF50'; // Therapeutic
+        else inrColor = '#F44336';                       // High risk
+        
+        return `
+            <tr>
+                <td style="white-space: nowrap; font-size: 0.9rem;">${formattedDate}</td>
+                <td><strong style="color: ${inrColor}; font-size: 1.1rem;">${log.inr}</strong></td>
+                <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${log.comment}">${log.comment}</td>
+                <td class="action-col">
+                    <button class="btn btn-danger" data-id="${log.id}" title="Delete entry">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    // Add event listeners to delete buttons (using event delegation for efficiency)
+    logBody.querySelectorAll('.btn-danger').forEach(button => {
+        button.addEventListener('click', function() {
+            const entryId = parseInt(this.getAttribute('data-id'));
+            deleteLogEntry(entryId);
+        });
+    });
+}
+              
+        
             
-            // Delete Log Entry
-            function deleteLogEntry(index) {
-                if (confirm('Delete this log entry?')) {
-                    let logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
-                    logs.splice(index, 1);
-                    localStorage.setItem('inrLogs', JSON.stringify(logs));
-                    renderLogTable();
-                }
-            }
+            // Delete Log Entry - FIXED to use unique ID
+function deleteLogEntry(entryId) {
+    if (confirm('Delete this log entry?')) {
+        let logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
+        // Filter out the entry with matching ID
+        logs = logs.filter(log => log.id !== entryId);
+        localStorage.setItem('inrLogs', JSON.stringify(logs));
+        renderLogTable();
+    }
+}
             
             // Clear All Logs
             clearAllBtn.addEventListener('click', function() {
