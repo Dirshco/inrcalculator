@@ -176,39 +176,68 @@
             margin: 10px 0;
         }
         
-        .log-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+       /* ✅ FIXED: Log table contained within card */
+#log-container {
+    overflow-x: auto;  /* Enable horizontal scroll on small screens */
+    border-radius: 8px;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    min-width: 400px;  /* Prevent squishing on small screens */
+    font-size: 0.95rem;
+}
+
+.log-table th {
+    background: var(--teal);
+    color: white;
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 500;
+    white-space: nowrap;  /* Prevent header text wrapping */
+}
+
+.log-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.log-table tr:last-child td {
+    border-bottom: none;
+}
+
+.log-table tr:hover {
+    background: rgba(0, 128, 128, 0.05);
+}
+
+/* ✅ NEW: Action column styling */
+.log-table .action-col {
+    width: 60px;
+    text-align: center;
+}
+
+.log-table .btn-danger {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    width: auto;
+    margin: 0;
+}
+
+/* ✅ Responsive: Stack on very small screens */
+@media (max-width: 480px) {
+    .log-table {
+        font-size: 0.9rem;
+    }
+    .log-table th,
+    .log-table td {
+        padding: 10px 12px;
+    }
+}
         
-        .log-table th {
-            background: var(--teal);
-            color: white;
-            text-align: left;
-            padding: 12px 15px;
-            font-weight: 500;
-        }
-        
-        .log-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .log-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .log-table tr:hover {
-            background: rgba(0, 128, 128, 0.05);
-        }
-        
-        .empty-log {
-            text-align: center;
-            padding: 30px;
-            color: var(--light-text);
-            font-style: italic;
-        }
+      
         
         .education-thumbnail {
             width: 100%;
