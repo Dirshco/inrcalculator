@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>INR Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --teal: #008080;
+            --teal-dark: #006666;
+            --light-bg: #f8f9fa;
+            --dark-text: #333;
+            --light-text: #666;
+            --white: #fff;
+            --shadow: 0 4px 12px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            padding-bottom: 80px;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .page {
+            display: none;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 15px;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        h1 {
+            color: var(--teal);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+        
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--dark-text);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.2);
+        }
+        
+        .btn {
+            background: var(--teal);
+            color: var(--white);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        
+        .btn:hover {
+            background: var(--teal-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .result-container {
+            text-align: center;
+            padding: 20px;
+            margin: 20px 0;
+            background: rgba(0, 128, 128, 0.08);
+            border-radius: var(--border-radius);
+            display: none;
+        }
+        
+        .result-container.show {
+            display: block;
+            animation: pulse 0.5s;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.98); }
+            70% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        
+        .inr-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--teal);
+            margin: 10px 0;
+        }
+        
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .log-table th {
+            background: var(--teal);
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 500;
+        }
+        
+        .log-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .log-table tr:hover {
+            background: rgba(0, 128, 128, 0.05);
+        }
+        
+        .empty-log {
+            text-align: center;
+            padding: 30px;
+            color: var(--light-text);
+            font-style: italic;
+        }
+        
+        .education-thumbnail {
+            width: 100%;
+            max-width: 400px;
+            height: 225px;
+            background: linear-gradient(45deg, #008080, #00a8a8);
+            border-radius: 12px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .education-thumbnail::before {
+            content: "";
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .education-thumbnail i {
+            font-size: 2.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .warning-list {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+        
+        .warning-list li {
+            margin-bottom: 8px;
+        }
+        
+        .disclaimer {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            font-size: 0.9rem;
+        }
+        
+        /* FAB Navigation Styles */
+        .fab-container {
+            position: fixed;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        .fab-main {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--teal);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .fab-main:hover {
+            background: var(--teal-dark);
+            transform: translateY(-50%) scale(1.05);
+        }
+        
+        .fab-main.active .fa-plus {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+        
+        .fab-main.active .fa-minus {
+            opacity: 1;
+            transform: rotate(0);
+        }
+        
+        .fab-main .fa-minus {
+            position: absolute;
+            opacity: 0;
+            transform: rotate(-90deg);
+            transition: var(--transition);
+        }
+        
+        .fab-options {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+        
+        .fab-container.active .fab-options {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .fab-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--white);
+            color: var(--teal);
+            border: 2px solid var(--teal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            text-decoration: none;
+        }
+        
+        .fab-option:hover {
+            background: var(--teal);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .fab-option i {
+            transition: var(--transition);
+        }
+        
+        .fab-option:hover i {
+            transform: scale(1.2);
+        }
+        
+        .fab-label {
+            position: absolute;
+            right: 60px;
+            background: var(--teal);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(10px);
+            transition: var(--transition);
+            pointer-events: none;
+        }
+        
+        .fab-option:hover .fab-label {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Semi-circle animation for FAB options */
+        .fab-container.active .fab-options {
+            display: flex;
+        }
+        
+        .fab-container.active .fab-option:nth-child(1) { transform: translate(-10px, -120px) scale(1); opacity: 1; }
+        .fab-container.active .fab-option:nth-child(2) { transform: translate(-10px, -60px) scale(1); opacity: 1; }
+        .fab-container.active .fab-option:nth-child(3) { transform: translate(-10px, 0) scale(1); opacity: 1; }
+        .fab-container.active .fab-option:nth-child(4) { transform: translate(-10px, 60px) scale(1); opacity: 1; }
+        .fab-container.active .fab-option:nth-child(5) { transform: translate(-10px, 120px) scale(1); opacity: 1; }
+        
+        .fab-container .fab-option {
+            transform: translateX(20px) scale(0.8);
+            opacity: 0;
+        }
+        
+        /* Page content styles */
+        .formula {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .range-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .range-box {
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 120px;
+        }
+        
+        .normal {
+            background: #e8f5e9;
+            border: 1px solid #4caf50;
+        }
+        
+        .therapeutic {
+            background: #fff8e1;
+            border: 1px solid #ffc107;
+        }
+        
+        .high {
+            background: #ffebee;
+            border: 1px solid #f44336;
+        }
+        
+        .range-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .range-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--light-text);
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .fab-container {
+                right: 15px;
+            }
+            
+            .fab-main {
+                width: 55px;
+                height: 55px;
+            }
+            
+            .fab-option {
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
+            }
+            
+            .fab-container.active .fab-option:nth-child(1) { transform: translate(-5px, -100px) scale(1); }
+            .fab-container.active .fab-option:nth-child(2) { transform: translate(-5px, -50px) scale(1); }
+            .fab-container.active .fab-option:nth-child(3) { transform: translate(-5px, 0) scale(1); }
+            .fab-container.active .fab-option:nth-child(4) { transform: translate(-5px, 50px) scale(1); }
+            .fab-container.active .fab-option:nth-child(5) { transform: translate(-5px, 100px) scale(1); }
+            
+            .range-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .log-table {
+                font-size: 0.9rem;
+            }
+            
+            .log-table th,
+            .log-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-heartbeat"></i> INR Calculator</h1>
+        <div class="subtitle">Monitor your anticoagulation therapy</div>
+    </header>
+    
+    <!-- Calculator Page (Homepage) -->
+    <section id="calculator" class="page active">
+        <div class="card">
+            <h2><i class="fas fa-calculator"></i> Calculate INR</h2>
+            <p style="margin: 10px 0 15px; color: var(--light-text);">Enter your lab values below to calculate your International Normalized Ratio.</p>
+            
+            <div class="input-group">
+                <label for="patient-pt">Patient PT (seconds)</label>
+                <input type="number" id="patient-pt" step="0.1" min="0" placeholder="e.g., 14.5">
+            </div>
+            
+            <div class="input-group">
+                <label for="mean-normal-pt">Mean Normal PT (seconds)</label>
+                <input type="number" id="mean-normal-pt" step="0.1" min="0" placeholder="e.g., 12.0">
+            </div>
+            
+            <div class="input-group">
+                <label for="isi">ISI (International Sensitivity Index)</label>
+                <input type="number" id="isi" step="0.01" min="0.8" max="3.0" placeholder="e.g., 1.2" value="1.2">
+            </div>
+            
+            <button class="btn" id="calculate-btn">
+                <i class="fas fa-equals"></i> Calculate INR
+            </button>
+            
+            <div class="result-container" id="result-container">
+                <div>Your INR is:</div>
+                <div class="inr-value" id="inr-result">--</div>
+                <div id="inr-interpretation" style="margin: 10px 0; font-weight: 500;"></div>
+                <button class="btn" id="log-result-btn">
+                    <i class="fas fa-save"></i> Log This Result
+                </button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><i class="fas fa-info-circle"></i> Quick Tips</h3>
+            <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>PT values are typically between 10-14 seconds for healthy individuals</li>
+                <li>ISI is provided by the lab/reagent manufacturer (usually 1.0-2.0)</li>
+                <li>Therapeutic INR range is usually 2.0-3.0 for most conditions</li>
+                <li>Always follow your healthcare provider's specific target range</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Log Page -->
+    <section id="log" class="page">
+        <div class="card">
+            <h2><i class="fas fa-clipboard-list"></i> INR Log</h2>
+            <p style="margin: 10px 0 15px; color: var(--light-text);">Your saved INR calculations. Data is stored locally on this device.</p>
+            
+            <div id="log-container">
+                <table class="log-table">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Patient PT</th>
+                            <th>Normal PT</th>
+                            <th>ISI</th>
+                            <th>INR</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-body">
+                        <!-- Log entries will be inserted here -->
+                    </tbody>
+                </table>
+                <div id="empty-log" class="empty-log">
+                    <i class="fas fa-clipboard" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                    No INR results logged yet.<br>Calculate and save your first result!
+                </div>
+            </div>
+            
+            <button class="btn btn-secondary" id="clear-all-btn" style="margin-top: 15px; display: none;">
+                <i class="fas fa-trash-alt"></i> Clear All Logs
+            </button>
+        </div>
+    </section>
+    
+    <!-- How It Works Page -->
+    <section id="how-it-works" class="page">
+        <div class="card">
+            <h2><i class="fas fa-book-open"></i> How INR is Calculated</h2>
+            
+            <div class="formula">
+                INR = (Patient PT ÷ Mean Normal PT)<sup>ISI</sup>
+            </div>
+            
+            <h3 style="margin: 20px 0 10px;">Input Definitions</h3>
+            <ul class="warning-list">
+                <li><strong>Patient PT:</strong> Your prothrombin time in seconds from a blood test. Measures how long it takes your blood to clot.</li>
+                <li><strong>Mean Normal PT:</strong> The average PT value from healthy individuals tested with the same reagent/instrument. Provided by your lab.</li>
+                <li><strong>ISI (International Sensitivity Index):</strong> A calibration value for the thromboplastin reagent used in testing. Ranges from 0.8-3.0; lower values indicate more sensitive reagents.</li>
+            </ul>
+            
+            <h3 style="margin: 20px 0 10px;">Understanding Your Results</h3>
+            <div class="range-info">
+                <div class="range-box normal">
+                    <span class="range-title">Normal Range</span>
+                    <span class="range-value">0.8 - 1.2</span>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">For people not on anticoagulants</div>
+                </div>
+                <div class="range-box therapeutic">
+                    <span class="range-title">Therapeutic Range</span>
+                    <span class="range-value">2.0 - 3.0</span>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">Typical target for most conditions</div>
+                </div>
+                <div class="range-box high">
+                    <span class="range-title">High Risk</span>
+                    <span class="range-value">&gt; 3.5</span>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">Increased bleeding risk</div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px;"><strong>Note:</strong> Your target INR range may differ based on your condition. Always follow the specific range provided by your healthcare provider.</p>
+        </div>
+    </section>
+    
+    <!-- Education Page -->
+    <section id="education" class="page">
+        <div class="card">
+            <h2><i class="fas fa-graduation-cap"></i> Learn About INR & Anticoagulation</h2>
+            <p style="margin: 15px 0;">Understanding your INR helps you manage your anticoagulation therapy safely and effectively.</p>
+            
+            <div class="education-thumbnail">
+                <i class="fas fa-play-circle"></i>
+            </div>
+            
+            <button class="btn" id="watch-video-btn" style="max-width: 300px; margin: 0 auto; display: block;">
+                <i class="fab fa-youtube"></i> Watch Video Tutorial
+            </button>
+            
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #eee;">
+                <h3 style="margin-bottom: 10px;">Key Topics Covered:</h3>
+                <ul class="warning-list">
+                    <li>What INR measures and why it matters</li>
+                    <li>How warfarin (Coumadin) affects your blood clotting</li>
+                    <li>Factors that can change your INR (diet, medications, illness)</li>
+                    <li>Tips for consistent and accurate testing</li>
+                    <li>When to contact your healthcare provider</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3><i class="fas fa-lightbulb"></i> Pro Tips</h3>
+            <ul class="warning-list">
+                <li>Get your blood tests at the same time of day for consistency</li>
+                <li>Keep a food diary if you notice INR fluctuations (vitamin K intake matters)</li>
+                <li>Always inform new healthcare providers that you take anticoagulants</li>
+                <li>Wear a medical alert bracelet if you're on long-term anticoagulation</li>
+            </ul>
+        </div>
+    </section>
+    
+    <!-- Side Effects Page -->
+    <section id="side-effects" class="page">
+        <div class="card">
+            <h2><i class="fas fa-exclamation-triangle"></i> Warning Signs: Call Your Doctor Immediately</h2>
+            <p style="margin: 10px 0 15px; color: var(--dark-text); font-weight: 500;">If you experience any of these while taking warfarin (Coumadin), seek medical attention right away:</p>
+            
+            <ul class="warning-list">
+                <li><strong>Unusual bleeding:</strong> Nosebleeds that won't stop, bleeding gums, coughing/vomiting blood</li>
+                <li><strong>Blood in urine or stool:</strong> Pink, red, or brown urine; bright red or black/tarry stools</li>
+                <li><strong>Severe headaches, dizziness, or weakness:</strong> Could indicate bleeding in the brain</li>
+                <li><strong>Unexplained bruising:</strong> Large bruises or bruises that grow larger</li>
+                <li><strong>Heavy menstrual bleeding:</strong> Soaking through pads/tampons much faster than usual</li>
+                <li><strong>Cuts that won't stop bleeding:</strong> Even minor cuts that bleed for more than 10 minutes</li>
+                <li><strong>Severe stomach pain:</strong> Could indicate internal bleeding</li>
+                <li><strong>Signs of stroke:</strong> Sudden numbness, confusion, trouble speaking, vision changes, loss of balance</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h3><i class="fas fa-bell"></i> Also Notify Your Provider About:</h3>
+            <ul class="warning-list">
+                <li>Starting or stopping any medications (including OTC drugs and supplements)</li>
+                <li>Significant changes in diet, especially vitamin K-rich foods (leafy greens)</li>
+                <li>Illnesses like diarrhea, vomiting, or fever that last more than 24 hours</li>
+                <li>Planned surgeries, dental procedures, or new medical tests</li>
+                <li>Changes in alcohol consumption</li>
+                <li>Pregnancy or plans to become pregnant</li>
+                <li>Missed doses of your anticoagulant medication</li>
+            </ul>
+        </div>
+        
+        <div class="disclaimer">
+            <strong>Medical Disclaimer:</strong> This calculator and information are for educational purposes only and are not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition. Never disregard professional medical advice or delay in seeking it because of something you have read here. INR management requires regular monitoring by a healthcare professional.
+        </div>
+    </section>
+    
+    <!-- FAB Navigation -->
+    <div class="fab-container" id="fab-container">
+        <button class="fab-main" id="fab-main">
+            <i class="fas fa-plus"></i>
+            <i class="fas fa-minus"></i>
+        </button>
+        <div class="fab-options">
+            <a href="#" class="fab-option" data-page="calculator">
+                <i class="fas fa-calculator"></i>
+                <span class="fab-label">Calculator</span>
+            </a>
+            <a href="#" class="fab-option" data-page="log">
+                <i class="fas fa-clipboard-list"></i>
+                <span class="fab-label">Log</span>
+            </a>
+            <a href="#" class="fab-option" data-page="how-it-works">
+                <i class="fas fa-book-open"></i>
+                <span class="fab-label">How It Works</span>
+            </a>
+            <a href="#" class="fab-option" data-page="education">
+                <i class="fas fa-graduation-cap"></i>
+                <span class="fab-label">Education</span>
+            </a>
+            <a href="#" class="fab-option" data-page="side-effects">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="fab-label">Side Effects</span>
+            </a>
+        </div>
+    </div>
+    
+    <footer>
+        <p>INR Calculator &copy; 2023 | For educational use only</p>
+        <p style="margin-top: 5px; font-size: 0.85rem;">Always consult your healthcare provider for medical advice</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const fabMain = document.getElementById('fab-main');
+            const fabContainer = document.getElementById('fab-container');
+            const fabOptions = document.querySelectorAll('.fab-option');
+            const pages = document.querySelectorAll('.page');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const logResultBtn = document.getElementById('log-result-btn');
+            const resultContainer = document.getElementById('result-container');
+            const inrResult = document.getElementById('inr-result');
+            const inrInterpretation = document.getElementById('inr-interpretation');
+            const logBody = document.getElementById('log-body');
+            const emptyLog = document.getElementById('empty-log');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+            const watchVideoBtn = document.getElementById('watch-video-btn');
+            
+            // FAB Toggle Functionality
+            fabMain.addEventListener('click', function() {
+                fabContainer.classList.toggle('active');
+                fabMain.classList.toggle('active');
+            });
+            
+            // Close FAB when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!fabContainer.contains(e.target) && fabContainer.classList.contains('active')) {
+                    fabContainer.classList.remove('active');
+                    fabMain.classList.remove('active');
+                }
+            });
+            
+            // Page Navigation via FAB
+            fabOptions.forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetPage = this.getAttribute('data-page');
+                    
+                    // Hide all pages
+                    pages.forEach(page => page.classList.remove('active'));
+                    
+                    // Show target page
+                    document.getElementById(targetPage).classList.add('active');
+                    
+                    // Close FAB menu
+                    fabContainer.classList.remove('active');
+                    fabMain.classList.remove('active');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                });
+            });
+            
+            // INR Calculation
+            calculateBtn.addEventListener('click', function() {
+                const patientPT = parseFloat(document.getElementById('patient-pt').value);
+                const meanNormalPT = parseFloat(document.getElementById('mean-normal-pt').value);
+                const isi = parseFloat(document.getElementById('isi').value);
+                
+                // Validation
+                if (isNaN(patientPT) || isNaN(meanNormalPT) || isNaN(isi)) {
+                    alert('Please enter valid numbers for all fields');
+                    return;
+                }
+                
+                if (patientPT <= 0 || meanNormalPT <= 0 || isi <= 0) {
+                    alert('All values must be greater than zero');
+                    return;
+                }
+                
+                if (meanNormalPT === 0) {
+                    alert('Mean Normal PT cannot be zero');
+                    return;
+                }
+                
+                // Calculate INR: (Patient PT / Mean Normal PT) ^ ISI
+                const inr = Math.pow(patientPT / meanNormalPT, isi);
+                const roundedINR = Math.round(inr * 100) / 100;
+                
+                // Display result
+                inrResult.textContent = roundedINR.toFixed(2);
+                
+                // Interpretation
+                if (roundedINR < 0.8) {
+                    inrInterpretation.textContent = 'Below normal range';
+                    inrInterpretation.style.color = '#2196F3';
+                } else if (roundedINR < 1.2) {
+                    inrInterpretation.textContent = 'Normal range (not on anticoagulants)';
+                    inrInterpretation.style.color = '#4CAF50';
+                } else if (roundedINR < 2.0) {
+                    inrInterpretation.textContent = 'Below therapeutic range';
+                    inrInterpretation.style.color = '#FF9800';
+                } else if (roundedINR <= 3.0) {
+                    inrInterpretation.textContent = 'Therapeutic range';
+                    inrInterpretation.style.color = '#4CAF50';
+                } else if (roundedINR <= 3.5) {
+                    inrInterpretation.textContent = 'Above therapeutic range';
+                    inrInterpretation.style.color = '#FF9800';
+                } else {
+                    inrInterpretation.textContent = 'High risk - contact provider';
+                    inrInterpretation.style.color = '#F44336';
+                }
+                
+                // Show result container
+                resultContainer.classList.add('show');
+                
+                // Store values for logging
+                window.lastCalculation = {
+                    patientPT: patientPT.toFixed(1),
+                    meanNormalPT: meanNormalPT.toFixed(1),
+                    isi: isi.toFixed(2),
+                    inr: roundedINR.toFixed(2),
+                    timestamp: new Date().toISOString()
+                };
+            });
+            
+            // Log Result Functionality
+            logResultBtn.addEventListener('click', function() {
+                if (!window.lastCalculation) return;
+                
+                // Get existing logs or initialize array
+                let logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
+                
+                // Add new log entry
+                logs.unshift(window.lastCalculation); // Add to beginning for newest first
+                
+                // Save to localStorage
+                localStorage.setItem('inrLogs', JSON.stringify(logs));
+                
+                // Show confirmation
+                alert('Result logged successfully!');
+                
+                // Refresh log display if on log page
+                if (document.getElementById('log').classList.contains('active')) {
+                    renderLogTable();
+                }
+                
+                // Hide result container after logging
+                resultContainer.classList.remove('show');
+            });
+            
+            // Render Log Table
+            function renderLogTable() {
+                const logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
+                
+                if (logs.length === 0) {
+                    logBody.innerHTML = '';
+                    emptyLog.style.display = 'block';
+                    clearAllBtn.style.display = 'none';
+                    return;
+                }
+                
+                emptyLog.style.display = 'none';
+                clearAllBtn.style.display = 'block';
+                
+                logBody.innerHTML = logs.map((log, index) => {
+                    const date = new Date(log.timestamp);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    return `
+                        <tr>
+                            <td>${formattedDate}</td>
+                            <td>${log.patientPT}</td>
+                            <td>${log.meanNormalPT}</td>
+                            <td>${log.isi}</td>
+                            <td><strong>${log.inr}</strong></td>
+                            <td>
+                                <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.85rem;" data-index="${index}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                // Add event listeners to delete buttons
+                document.querySelectorAll('#log-body .btn-danger').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        deleteLogEntry(index);
+                    });
+                });
+            }
+            
+            // Delete Log Entry
+            function deleteLogEntry(index) {
+                if (confirm('Delete this log entry?')) {
+                    let logs = JSON.parse(localStorage.getItem('inrLogs')) || [];
+                    logs.splice(index, 1);
+                    localStorage.setItem('inrLogs', JSON.stringify(logs));
+                    renderLogTable();
+                }
+            }
+            
+            // Clear All Logs
+            clearAllBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to delete ALL log entries? This cannot be undone.')) {
+                    localStorage.removeItem('inrLogs');
+                    renderLogTable();
+                }
+            });
+            
+            // Watch Video Button
+            watchVideoBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open('https://www.youtube.com/watch?v=P-O0DfjILsM', '_blank');
+            });
+            
+            // Initialize
+            renderLogTable();
+            
+            // Allow Enter key to trigger calculation
+            document.getElementById('patient-pt').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateBtn.click();
+            });
+            document.getElementById('mean-normal-pt').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateBtn.click();
+            });
+            document.getElementById('isi').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') calculateBtn.click();
+            });
+        });
+    </script>
+</body>
+</html>
