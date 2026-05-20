@@ -585,39 +585,37 @@
         </div>
     </section>
     
-    <!-- Log Page -->
-    <section id="log" class="page">
-        <div class="card">
-            <h2><i class="fas fa-clipboard-list"></i> INR Log</h2>
-            <p style="margin: 10px 0 15px; color: var(--light-text);">Your saved INR calculations. Data is stored locally on this device.</p>
-            
-            <div id="log-container">
-                <table class="log-table">
-                    <thead>
-                        <tr>
-                            <th>Date/Time</th>
-                            <th>Patient PT</th>
-                            <th>Normal PT</th>
-                            <th>ISI</th>
-                            <th>INR</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="log-body">
-                        <!-- Log entries will be inserted here -->
-                    </tbody>
-                </table>
-                <div id="empty-log" class="empty-log">
-                    <i class="fas fa-clipboard" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
-                    No INR results logged yet.<br>Calculate and save your first result!
-                </div>
+    <!-- Log Page - FIXED LAYOUT -->
+<section id="log" class="page">
+    <div class="card">
+        <h2><i class="fas fa-clipboard-list"></i> INR Log</h2>
+        <p style="margin: 10px 0 15px; color: var(--light-text);">Your saved INR calculations. Data is stored locally on this device.</p>
+        
+        <div id="log-container">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>INR</th>
+                        <th>Note</th>
+                        <th class="action-col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="log-body">
+                    <!-- Log entries inserted by JavaScript -->
+                </tbody>
+            </table>
+            <div id="empty-log" class="empty-log">
+                <i class="fas fa-clipboard" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
+                No INR results logged yet.<br>Calculate and save your first result!
             </div>
-            
-            <button class="btn btn-secondary" id="clear-all-btn" style="margin-top: 15px; display: none;">
-                <i class="fas fa-trash-alt"></i> Clear All Logs
-            </button>
         </div>
-    </section>
+        
+        <button class="btn btn-secondary" id="clear-all-btn" style="margin-top: 15px; display: none;">
+            <i class="fas fa-trash-alt"></i> Clear All Logs
+        </button>
+    </div>
+</section>
     
     <!-- How It Works Page -->
     <section id="how-it-works" class="page">
