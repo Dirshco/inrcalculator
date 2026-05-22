@@ -6,9 +6,9 @@
     <title>INR Calculator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-     /* ==========================================================================
-   INR CALCULATOR - ENHANCED USER EXPERIENCE AND COLOR COMPLIANCE
-   No changes to underlying HTML structural elements or JavaScript state logic.
+    /* ==========================================================================
+   INR CALCULATOR - COLOR OVERRIDES
+   Forcing background colors across Bootstrap structures without modifying HTML.
    ========================================================================== */
 
 :root {
@@ -18,166 +18,102 @@
     --md-sys-color-primary-container: #f9dedc;
     --md-sys-color-secondary: #00658e;     /* Calm Clinical Teal-Blue */
     --md-sys-color-on-secondary: #ffffff;
-    --md-sys-color-surface: #fdf8f7;       /* Soft Anti-Glare Warm White */
+    --md-sys-color-surface: #fdf8f7;       /* Soft Anti-Glare Warm Base */
     --md-sys-color-on-surface: #1c1b1f;
-    --md-sys-color-surface-variant: #f4e0db;
+    --md-sys-color-surface-variant: #f4e0db; /* Colorful Accent tint */
     --md-sys-color-outline: #79747e;
     
     /* Therapeutic Range Status Indicators */
-    --color-therapeutic-low: #e46a00;     /* High-visibility Warning Orange */
-    --color-therapeutic-target: #146c36;  /* High-contrast Safe Green */
-    --color-therapeutic-high: #b3261e;    /* Critical Alarm Red */
+    --color-therapeutic-low: #e46a00;     
+    --color-therapeutic-target: #146c36;  
+    --color-therapeutic-high: #b3261e;    
     
-    /* Typography & Accessibility scales */
     --font-family-system: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Global Reset & Body Adjustments */
+/* Global Background Setup */
 body {
-    background-color: var(--md-sys-color-surface);
+    background-color: var(--md-sys-color-surface) !important;
     color: var(--md-sys-color-on-surface);
     font-family: var(--font-family-system);
-    margin: 0;
-    padding: 16px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
 }
 
-/* Application Container/Screens */
-.container, #app, .screen-wrapper, .page {
-    max-width: 480px;
-    margin: 0 auto;
-    background: #ffffff;
-    border-radius: 28px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--md-sys-color-surface-variant);
+/* 
+   FORCE COLOR INTO THE WHITE CARDS
+   This overrides Bootstrap's .card and .bg-light wrappers 
+*/
+.card, 
+.bg-light, 
+div[id$="Screen"], 
+div[id*="screen"],
+.container-fluid {
+    background-color: var(--md-sys-color-surface-variant) !important;
+    border-color: var(--md-sys-color-outline) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Inner header areas of cards */
+.card-header, .card-footer {
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
 /* Headers & Titles */
-h1, h2, h3, .app-title {
-    color: var(--md-sys-color-primary);
-    font-weight: 700;
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 20px;
-    letter-spacing: -0.5px;
+h1, h2, h3, h4, h5, .card-title {
+    color: var(--md-sys-color-primary) !important;
+    font-weight: 700 !important;
 }
 
 /* Form Elements & Inputs */
-label, .input-label {
-    display: block;
+label {
     font-weight: 600;
-    margin-bottom: 8px;
     color: var(--md-sys-color-on-surface);
-    font-size: 1.05rem;
 }
 
 input[type="number"], 
 input[type="text"], 
-select, 
-textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 14px 16px;
-    font-size: 1.15rem; /* Large text scale to ensure readability */
-    font-family: var(--font-family-system);
-    border: 2px solid var(--md-sys-color-outline);
-    border-radius: 12px;
-    background-color: #ffffff;
-    color: var(--md-sys-color-on-surface);
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    margin-bottom: 20px;
+select {
+    border: 2px solid var(--md-sys-color-outline) !important;
+    border-radius: 12px !important;
+    background-color: #ffffff !important;
+    color: var(--md-sys-color-on-surface) !important;
+    font-size: 1.1rem !important;
 }
 
 input:focus, select:focus {
-    outline: none;
-    border-color: var(--md-sys-color-secondary);
-    box-shadow: 0 0 0 3px rgba(0, 101, 142, 0.2);
+    outline: none !important;
+    border-color: var(--md-sys-color-secondary) !important;
+    box-shadow: 0 0 0 3px rgba(0, 101, 142, 0.2) !important;
 }
 
-/* Buttons - Large Touch-Friendly Targets */
+/* Buttons Transformation */
 button, .btn {
-    display: block;
-    width: 100%;
-    padding: 16px 24px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 100px; /* Fully rounded capsule style buttons */
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    text-align: center;
-    margin-bottom: 12px;
+    border-radius: 100px !important; /* Capsule style */
+    padding: 12px 24px !important;
+    font-weight: 600 !important;
 }
 
-/* Primary Action Buttons */
-button.primary, button[type="submit"], .btn-submit {
-    background-color: var(--md-sys-color-primary);
-    color: var(--md-sys-color-on-primary);
-    box-shadow: 0 2px 4px rgba(179, 38, 30, 0.2);
+/* Target primary calculation actions */
+.btn-primary, button[onclick*="calc"] {
+    background-color: var(--md-sys-color-primary) !important;
+    border-color: var(--md-sys-color-primary) !important;
+    color: var(--md-sys-color-on-primary) !important;
 }
 
-button.primary:hover, button[type="submit"]:hover {
-    background-color: #961c16;
-}
-
-/* Secondary/Back Buttons */
-button.secondary, .btn-secondary, .btn-back {
-    background-color: var(--md-sys-color-primary-container);
-    color: var(--md-sys-color-primary);
-}
-
-button.secondary:hover {
-    background-color: #f4c7c3;
+/* Target secondary or back navigation buttons */
+.btn-secondary, .btn-outline-secondary, button[onclick*="back"] {
+    background-color: var(--md-sys-color-primary-container) !important;
+    border-color: transparent !important;
+    color: var(--md-sys-color-primary) !important;
 }
 
 /* Output Display Screens & Therapeutic Color Coding */
-.result-box, #result, .output-panel {
-    background-color: var(--md-sys-color-surface-variant);
-    border-radius: 16px;
-    padding: 20px;
-    margin-top: 20px;
-    text-align: center;
-    border-left: 6px solid var(--md-sys-color-secondary);
-}
-
-/* Example Classes for Dynamic Clinical Feedback Cards */
-.therapeutic-low {
-    border-left-color: var(--color-therapeutic-low) !important;
-    background-color: #fff4e5 !important;
-}
-
-.therapeutic-target {
-    border-left-color: var(--color-therapeutic-target) !important;
-    background-color: #e6f4ea !important;
-}
-
-.therapeutic-high {
-    border-left-color: var(--color-therapeutic-high) !important;
-    background-color: #fce8e6 !important;
-}
-
-/* Custom Navigation Tabs or Radio Groups (if present) */
-.tab-container {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 24px;
-}
-
-.tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px;
-    background: var(--md-sys-color-surface-variant);
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.tab.active {
-    background: var(--md-sys-color-secondary);
-    color: white;
+/* This catches your result containers and wraps them in high contrast fields */
+.alert, #result, [id*="result"] {
+    border-radius: 16px !important;
+    padding: 16px !important;
+    border-left: 6px solid var(--md-sys-color-secondary) !important;
 }
      /* ===================== old css =============== */
         * {
