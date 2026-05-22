@@ -6,6 +6,180 @@
     <title>INR Calculator</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+     /* ==========================================================================
+   INR CALCULATOR - ENHANCED USER EXPERIENCE AND COLOR COMPLIANCE
+   No changes to underlying HTML structural elements or JavaScript state logic.
+   ========================================================================== */
+
+:root {
+    /* Color Palette - Vibrant Clinical Archetype */
+    --md-sys-color-primary: #b3261e;       /* Deep Hematology Crimson */
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: #f9dedc;
+    --md-sys-color-secondary: #00658e;     /* Calm Clinical Teal-Blue */
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-surface: #fdf8f7;       /* Soft Anti-Glare Warm White */
+    --md-sys-color-on-surface: #1c1b1f;
+    --md-sys-color-surface-variant: #f4e0db;
+    --md-sys-color-outline: #79747e;
+    
+    /* Therapeutic Range Status Indicators */
+    --color-therapeutic-low: #e46a00;     /* High-visibility Warning Orange */
+    --color-therapeutic-target: #146c36;  /* High-contrast Safe Green */
+    --color-therapeutic-high: #b3261e;    /* Critical Alarm Red */
+    
+    /* Typography & Accessibility scales */
+    --font-family-system: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Global Reset & Body Adjustments */
+body {
+    background-color: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    font-family: var(--font-family-system);
+    margin: 0;
+    padding: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Application Container/Screens */
+.container, #app, .screen-wrapper, .page {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--md-sys-color-surface-variant);
+}
+
+/* Headers & Titles */
+h1, h2, h3, .app-title {
+    color: var(--md-sys-color-primary);
+    font-weight: 700;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+}
+
+/* Form Elements & Inputs */
+label, .input-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--md-sys-color-on-surface);
+    font-size: 1.05rem;
+}
+
+input[type="number"], 
+input[type="text"], 
+select, 
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    font-size: 1.15rem; /* Large text scale to ensure readability */
+    font-family: var(--font-family-system);
+    border: 2px solid var(--md-sys-color-outline);
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: var(--md-sys-color-on-surface);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 20px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--md-sys-color-secondary);
+    box-shadow: 0 0 0 3px rgba(0, 101, 142, 0.2);
+}
+
+/* Buttons - Large Touch-Friendly Targets */
+button, .btn {
+    display: block;
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 100px; /* Fully rounded capsule style buttons */
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* Primary Action Buttons */
+button.primary, button[type="submit"], .btn-submit {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+    box-shadow: 0 2px 4px rgba(179, 38, 30, 0.2);
+}
+
+button.primary:hover, button[type="submit"]:hover {
+    background-color: #961c16;
+}
+
+/* Secondary/Back Buttons */
+button.secondary, .btn-secondary, .btn-back {
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-primary);
+}
+
+button.secondary:hover {
+    background-color: #f4c7c3;
+}
+
+/* Output Display Screens & Therapeutic Color Coding */
+.result-box, #result, .output-panel {
+    background-color: var(--md-sys-color-surface-variant);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+    border-left: 6px solid var(--md-sys-color-secondary);
+}
+
+/* Example Classes for Dynamic Clinical Feedback Cards */
+.therapeutic-low {
+    border-left-color: var(--color-therapeutic-low) !important;
+    background-color: #fff4e5 !important;
+}
+
+.therapeutic-target {
+    border-left-color: var(--color-therapeutic-target) !important;
+    background-color: #e6f4ea !important;
+}
+
+.therapeutic-high {
+    border-left-color: var(--color-therapeutic-high) !important;
+    background-color: #fce8e6 !important;
+}
+
+/* Custom Navigation Tabs or Radio Groups (if present) */
+.tab-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    background: var(--md-sys-color-surface-variant);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: var(--md-sys-color-secondary);
+    color: white;
+}
+     /* ===================== old css =============== */
         * {
             margin: 0;
             padding: 0;
